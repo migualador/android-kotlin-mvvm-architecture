@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">Delicious Cocktails</string>
+    <string name="home_title_a">Delicious&#160;</string>
+    <string name="home_title_b">Cocktails</string>
+    <string name="home_alcoholic_cocktails">Alcoholic Cocktails ></string>
+    <string name="home_non_alcoholic_cocktails">Non Alcoholic Cocktails ></string>
+    <string name="home_favorite_cocktails">Favorite Cocktails ></string>
+    <string name="home_favorites_empty">The cocktails that you mark as\nfavorites will appear here</string>
+    <string name="alcoholic_cocktails">Alcoholic Cocktails</string>
+    <string name="non_alcoholic_cocktails">Non Alcoholic Cocktails</string>
+    <string name="favorite_cocktails">Favorite Cocktails</string>
+    <string name="initialization_error">Initialization error</string>
+    <string name="ingredients">Ingredients</string>
+    <string name="instructions">Preparation</string>
+    <string name="alcoholic_drink">Alcoholic</string>
+    <string name="non_alcoholic_drink">Non Alcoholic</string>
+</resources>
+
