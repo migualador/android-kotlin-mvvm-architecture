@@ -20,7 +20,10 @@ By clicking on a cocktail item the application navigates to the cocktail detail 
 
 By clicking on each section header (Alcoholic Cocktails, Non-Alcoholic Cocktails, Favorite Cocktails), the application navigates to the respective cocktails list.
 
-https://github.com/migualador/android-kotlin-mvvm-architecture/assets/18292714/c955fe85-beb7-4b86-8f20-1ed3c38309ed
+
+https://github.com/migualador/android-kotlin-mvvm-architecture/assets/18292714/f538829b-ae55-4f3f-8fb3-68681cdbadac
+
+
 
 
 ## Architecture
@@ -63,6 +66,7 @@ Note: The choice of having separate streams (LiveData) for each data (one for Fe
 The domain layer encapsulates the business logic, acting as a bridge between the UI layer and the Data layer.
 This layer relays in UseCases. Each use case covers a part of the business logic, providing to the ViewModel a way of performing some operation with the data.
 UseCases also provides main-safety, moving the execution to a background thread by using coroutines.
+
 <img src="readme_res/domain_layer.png" alt="Domain Layer">
 
 
