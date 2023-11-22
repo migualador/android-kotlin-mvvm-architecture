@@ -20,10 +20,7 @@ By clicking on a cocktail item the application navigates to the cocktail detail 
 
 By clicking on each section header (Alcoholic Cocktails, Non-Alcoholic Cocktails, Favorite Cocktails), the application navigates to the respective cocktails list.
 
-<video width="544" height="960" controls>
-  <source src="readme_res/video_cap.mp4" type="video/mp4">
-</video>
-
+https://github.com/migualador/android-kotlin-mvvm-architecture/assets/18292714/c955fe85-beb7-4b86-8f20-1ed3c38309ed
 
 
 ## Architecture
