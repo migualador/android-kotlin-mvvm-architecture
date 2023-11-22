@@ -8,4 +8,5 @@
     <color name="primary_text_color">#ffffffff</color>
     <color name="secondary_text_color">#00c6c5</color>
     <color name="dark_alpha">#AA000000</color>
+    <color name="progress_color">#00c6c5</color>
 </resources>

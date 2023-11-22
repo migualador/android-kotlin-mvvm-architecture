@@ -21,3 +21,7 @@ data class IngredientAndMeasure(
     val ingredient: String,
     val measure: String
 )
+
+data class LoadingUiState(
+    val loading: Boolean = false,
+)

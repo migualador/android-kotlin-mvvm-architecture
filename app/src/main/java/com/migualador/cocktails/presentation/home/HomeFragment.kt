@@ -63,7 +63,7 @@ class HomeFragment: Fragment() {
         setupListeners()
         initializeAdapters()
 
-        viewModel.requestAlcoholicCocktails()
+        viewModel.requestUiState()
     }
 
 
@@ -107,6 +107,13 @@ class HomeFragment: Fragment() {
                         is NavigateUiState.NavigateToFavoriteCocktailsList -> navigateToFavoriteCocktailsList()
                     }
 
+                }
+            }
+
+            loadingUiStateLiveData.observe(viewLifecycleOwner) { loadingUiStateEvent ->
+                loadingUiStateEvent.getContentIfNotHandled()?.let {
+                    binding.progressBar.visibility = if (it.loading) View.VISIBLE else View.GONE
+                    binding.mainLayout.visibility = if (it.loading) View.GONE else View.VISIBLE
                 }
             }
 

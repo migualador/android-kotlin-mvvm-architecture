@@ -13,6 +13,7 @@ import com.migualador.cocktails.presentation.home.mapper_extensions.toCocktailDe
 import com.migualador.cocktails.presentation.home.mapper_extensions.toCocktailUiState
 import com.migualador.cocktails.presentation.home.ui_states.CocktailDetailUiState
 import com.migualador.cocktails.presentation.home.ui_states.CocktailUiState
+import com.migualador.cocktails.presentation.home.ui_states.LoadingUiState
 import com.migualador.cocktails.presentation.home.ui_states.NavigateUiState
 import javax.inject.Inject
 
@@ -26,6 +27,9 @@ class HomeViewModel @Inject constructor (
     private val retrieveNonAlcoholicCocktailsUseCase: RetrieveNonAlcoholicCocktailsUseCase,
     private val retrieveRandomCocktailsUseCase: RetrieveRandomCocktailsUseCase
 ): ViewModel() {
+
+    private var _loadingUiStateLiveData = MutableLiveData<Event<LoadingUiState>>()
+    val loadingUiStateLiveData: LiveData<Event<LoadingUiState>> = _loadingUiStateLiveData
 
     private val _navigateLiveData = MutableLiveData<Event<NavigateUiState>>()
     val navigateLiveData: LiveData<Event<NavigateUiState>> = _navigateLiveData
@@ -42,8 +46,20 @@ class HomeViewModel @Inject constructor (
     private val _featuredCocktailsLiveData = MutableLiveData<List<CocktailDetailUiState>>()
     val featuredCocktailsLiveData: LiveData<List<CocktailDetailUiState>> = _featuredCocktailsLiveData
 
+    private var stateAlreadyRetrieved = false
 
-    fun requestAlcoholicCocktails() {
+    fun requestUiState() {
+        if (stateAlreadyRetrieved) {
+            _loadingUiStateLiveData.value = Event(LoadingUiState(false))
+            requestFavoriteCocktails()
+        } else {
+            requestAlcoholicCocktails()
+        }
+    }
+
+    private fun requestAlcoholicCocktails() {
+
+        _loadingUiStateLiveData.value = Event(LoadingUiState(true))
 
         retrieveAlcoholicCocktailsUseCase.execute(Unit) { result ->
             if (result is UseCaseResult.Success) {
@@ -56,6 +72,7 @@ class HomeViewModel @Inject constructor (
 
             requestNonAlcoholicCocktails()
         }
+
     }
 
     private fun requestNonAlcoholicCocktails() {
@@ -100,9 +117,10 @@ class HomeViewModel @Inject constructor (
                     )
                 }
             }
-
+            _loadingUiStateLiveData.value = Event(LoadingUiState(false))
         }
 
+        stateAlreadyRetrieved = true
     }
 
     fun alcoholicCocktailsHeaderPressed() {
