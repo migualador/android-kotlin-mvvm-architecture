@@ -2,6 +2,7 @@ package com.migualador.cocktails.data.datasources.alcoholic_cocktails
 
 import com.migualador.cocktails.Constants
 import com.migualador.cocktails.data.entities.Cocktail
+import com.migualador.cocktails.data.network.NetworkResult
 import com.migualador.cocktails.data.network.api.CocktailsAPI
 import com.migualador.cocktails.data.network.mapper_extensions.toCocktail
 import retrofit2.Retrofit
@@ -16,16 +17,30 @@ import javax.inject.Inject
  */
 class AlcoholicCocktailsRemoteDataSource @Inject constructor() {
 
-    suspend fun getAlcoholicCocktails(): List<Cocktail>? {
-        val retrofit = Retrofit.Builder()
-            .baseUrl(Constants.THE_COCKTAIL_DB_API_BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
+    suspend fun getAlcoholicCocktails(): NetworkResult<List<Cocktail>> {
+        return try {
 
-        val cocktailsAPI = retrofit.create(CocktailsAPI::class.java)
-        val response = cocktailsAPI.getAlcoholicCocktails(Constants.THE_COCKTAIL_DB_API_KEY).awaitResponse()
-        val getAlcoholicCocktailsResponse = response.body()
-        return getAlcoholicCocktailsResponse?.drinks?.map { it.toCocktail() }
+            val retrofit = Retrofit.Builder()
+                .baseUrl(Constants.THE_COCKTAIL_DB_API_BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+
+            val cocktailsAPI = retrofit.create(CocktailsAPI::class.java)
+
+            val response = cocktailsAPI.getAlcoholicCocktails(Constants.THE_COCKTAIL_DB_API_KEY)
+                .awaitResponse()
+
+            if (response.isSuccessful) {
+                val getAlcoholicCocktailsResponse = response.body()
+                val alcoholicCocktails = getAlcoholicCocktailsResponse?.drinks?.map { it.toCocktail() }
+                NetworkResult.Success(alcoholicCocktails ?: emptyList())
+            } else {
+                NetworkResult.HttpError(response.code())
+            }
+
+        } catch (exception: Exception) {
+            NetworkResult.ConnectionError()
+        }
 
     }
 
