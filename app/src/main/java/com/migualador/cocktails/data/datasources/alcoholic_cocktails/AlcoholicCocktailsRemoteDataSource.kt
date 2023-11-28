@@ -17,7 +17,7 @@ import javax.inject.Inject
  */
 class AlcoholicCocktailsRemoteDataSource @Inject constructor() {
 
-    suspend fun getAlcoholicCocktails(): NetworkResult<List<Cocktail>> {
+    suspend fun getAlcoholicCocktails(): NetworkResult<List<Cocktail>?> {
         return try {
 
             val retrofit = Retrofit.Builder()
@@ -33,7 +33,7 @@ class AlcoholicCocktailsRemoteDataSource @Inject constructor() {
             if (response.isSuccessful) {
                 val getAlcoholicCocktailsResponse = response.body()
                 val alcoholicCocktails = getAlcoholicCocktailsResponse?.drinks?.map { it.toCocktail() }
-                NetworkResult.Success(alcoholicCocktails ?: emptyList())
+                NetworkResult.Success(alcoholicCocktails)
             } else {
                 NetworkResult.HttpError(response.code())
             }
