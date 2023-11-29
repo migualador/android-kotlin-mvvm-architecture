@@ -75,12 +75,26 @@ UseCases also provides main-safety, moving the execution to a background thread 
 The data layer is responsible of exposing data and centralizing changes.
 It is composed of repositories that use the information provided by data sources. A repository is responsible of coordinating the information of all the data sources that it uses.
 
+A common repository has 3 data sources:
+- Local data source (holds the data in memory)
+- Remote data source (uses Retrofit to retrieve data from a REST API)
+- Database data source (uses Room to persist the data)
+
 <img src="readme_res/data_layer.png" alt="Data Layer">
+ 
+The repository implements a policy that optimizes data retrieval speed while ensuring the application's operation when there is no access to the internet.
+1. The repository attempts to retrieve data from the local data source (memory).
+2. If there is no data available in the local data source it tries to fetch it from remote data source (network).
+3. If the retrieval from network is successful, the repository uses this data, storing it in both the local data source and the database data source for later retrievals.
+4. In case of unsuccessful retrieval from network, the repository will attempt to retrieve data from the database source (previously persisted data).
+
+The use of a database (persistence) as a last-resort data source ensures that even when there is no connection, the core functionalities of the application remain available.
+
 
 
 
 ## Still under development
 Future steps include:
-- [ ] Adding three levels of data sources in repositories: memory datasource, remote datasource (network) and local database datasource (Room). Currently, repositories only use remote data sources.
+- [X] Adding three levels of data sources in repositories: memory datasource, remote datasource (network) and local database datasource (Room).
 - [ ] Tests.
 - [ ] UI in Jetpack Compose.
