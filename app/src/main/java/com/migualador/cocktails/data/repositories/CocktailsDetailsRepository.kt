@@ -24,38 +24,55 @@ class CocktailsDetailsRepository @Inject constructor (
 ) {
 
     suspend fun getCocktailDetail(cocktailId: String): CocktailDetail? {
-        var cocktailDetail = cocktailsDetailsLocalDataSource.getCocktailDetail(cocktailId)
-        log("CocktailsDetailsLocalDataSource", cocktailDetail)
 
+        // first, try to retrieve from local (memory)
+        var cocktailDetail = retrieveFromLocalDataSource(cocktailId)
+
+        // if no results from local, retrieve from network
         if (cocktailDetail == null) {
-            val networkResult = cocktailsDetailsRemoteDataSource.getCocktailDetail(cocktailId)
-            cocktailDetail = when (networkResult) {
-                is NetworkResult.Success -> {
-                    networkResult.data?.let {
-                        cocktailsDetailsLocalDataSource.addCocktailDetail(it)
-                        cocktailsDetailsDBDataSource.addCocktailDetail(it)
-                        it
-                    }
-
-                }
-                is NetworkResult.HttpError -> null
-                is NetworkResult.ConnectionError -> null
-            }
-
-            log("CocktailsDetailsRemoteDataSource", cocktailDetail)
+            cocktailDetail = retrieveFromRemoteDataSource(cocktailId)
         }
 
+        // if no results from network, retrieve from DB (Room)
         if (cocktailDetail == null) {
-            cocktailDetail = cocktailsDetailsDBDataSource.getCocktailDetail(cocktailId)
-            log("CocktailsDetailsDBDataSource", cocktailDetail)
+            cocktailDetail = retrieveFromDBDataSource(cocktailId)
+        } else {
+            // store in local and DB for later use
+            cocktailsDetailsLocalDataSource.addCocktailDetail(cocktailDetail)
+            cocktailsDetailsDBDataSource.addCocktailDetail(cocktailDetail)
         }
 
         return cocktailDetail
     }
 
+    private fun retrieveFromLocalDataSource(cocktailId: String): CocktailDetail? {
+        val result = cocktailsDetailsLocalDataSource.getCocktailDetail(cocktailId)
+
+        log("CocktailsDetailsLocalDataSource", result)
+        return result
+    }
+
+    private suspend fun retrieveFromRemoteDataSource(cocktailId: String): CocktailDetail? {
+        val networkResult = cocktailsDetailsRemoteDataSource.getCocktailDetail(cocktailId)
+        val result = when {
+            (networkResult is NetworkResult.Success) && (networkResult.data != null) -> networkResult.data
+            else -> null  // HttpError, ConnectionError, empty response
+        }
+
+        log("CocktailsDetailsRemoteDataSource", result)
+        return result
+    }
+
+    private fun retrieveFromDBDataSource(cocktailId: String): CocktailDetail? {
+        val result = cocktailsDetailsDBDataSource.getCocktailDetail(cocktailId)
+
+        log("CocktailsDetailsDBDataSource", result)
+        return result
+    }
+
     private fun log(datasourceName: String, cocktailDetail: CocktailDetail?) {
         val count = if (cocktailDetail == null) 0
         else 1
-        logger.log("Retrieving from ${datasourceName}: ${count} cocktail detail")
+        logger.log("Retrieving from ${datasourceName}: $count cocktail detail")
     }
 }

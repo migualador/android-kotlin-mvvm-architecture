@@ -24,40 +24,54 @@ class AlcoholicCocktailsRepository @Inject constructor (
 ) {
 
     suspend fun getAlcoholicCocktails(): List<Cocktail> {
-        // first, try to retrieve from memory
-        var cocktails = alcoholicCocktailsLocalDataSource.getAlcoholicCocktails()
-        log("AlcoholicCocktailsLocalDataSource", cocktails)
 
-        // if no results, retrieve from network
+        // first, try to retrieve from local (memory)
+        var cocktails = retrieveFromLocalDataSource()
+
+        // if no results from local, retrieve from network
         if (cocktails.isEmpty()) {
-            val networkResult = alcoholicCocktailsRemoteDataSource.getAlcoholicCocktails()
-            cocktails = when (networkResult) {
-                is NetworkResult.Success -> {
-                    networkResult.data?.let {
-                        alcoholicCocktailsLocalDataSource.setAlcoholicCocktails(it)
-                        alcoholicCocktailsDBDataSource.setAlcoholicCocktails(it)
-                        it
-                    } ?: emptyList()
-                }
-                is NetworkResult.HttpError -> emptyList()
-                is NetworkResult.ConnectionError -> emptyList()
-            }
-
-            log("AlcoholicCocktailsRemoteDataSource", cocktails)
+            cocktails = retrieveFromRemoteDataSource()
         }
 
-        // if no results, retrieve from Room
+        // if no results from network, retrieve from DB (Room)
         if (cocktails.isEmpty()) {
-            cocktails = alcoholicCocktailsDBDataSource.getAlcoholicCocktails()
-            log("AlcoholicCocktailsDBDataSource", cocktails)
+            cocktails = retrieveFromDBDataSource()
+        } else {
+            // store in local and DB for later use
+            alcoholicCocktailsLocalDataSource.setAlcoholicCocktails(cocktails)
+            alcoholicCocktailsDBDataSource.setAlcoholicCocktails(cocktails)
         }
 
         return cocktails
     }
 
+    private fun retrieveFromLocalDataSource(): List<Cocktail> {
+        val result = alcoholicCocktailsLocalDataSource.getAlcoholicCocktails()
+
+        log("AlcoholicCocktailsLocalDataSource", result)
+        return result
+    }
+
+    private suspend fun retrieveFromRemoteDataSource(): List<Cocktail> {
+        val networkResult = alcoholicCocktailsRemoteDataSource.getAlcoholicCocktails()
+        val result = when {
+            (networkResult is NetworkResult.Success) && (networkResult.data != null) -> networkResult.data
+            else -> emptyList()  // HttpError, ConnectionError, empty response
+        }
+
+        log("AlcoholicCocktailsRemoteDataSource", result)
+        return result
+    }
+
+    private fun retrieveFromDBDataSource(): List<Cocktail> {
+        val result = alcoholicCocktailsDBDataSource.getAlcoholicCocktails()
+
+        log("AlcoholicCocktailsDBDataSource", result)
+        return result
+    }
+
     suspend fun getAlcoholicCocktailsById(cocktailsIds: List<String>): List<Cocktail> {
         val cocktails = getAlcoholicCocktails()
-
         return cocktails.filter { cocktailsIds.contains(it.id) }
     }
 
