@@ -20,7 +20,7 @@ class CocktailGridViewHolder(
     itemView: View
 ): BaseViewHolder<CocktailUiState>(context, itemView) {
 
-    val imageView: ImageView = itemView.findViewById(R.id.imageView)
+    private val imageView: ImageView = itemView.findViewById(R.id.imageView)
     private val nameTextView: TextView = itemView.findViewById(R.id.nameTextView)
 
     override fun bind(item: CocktailUiState) {
