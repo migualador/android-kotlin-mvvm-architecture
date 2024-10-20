@@ -95,6 +95,6 @@ The use of a database (persistence) as a last-resort data source ensures that ev
 
 ## Still under development
 Future steps include:
-- [X] Adding three levels of data sources in repositories: memory datasource, remote datasource (network) and local database datasource (Room).
-- [X] Tests.
-- [X] UI in Jetpack Compose (at this moment only HomeFragment)
+- [X] Adding three levels of data sources in repositories: memory datasource, remote datasource (network) and local database datasource (Room). **DONE**
+- [X] Tests. **DONE**
+- [X] UI in Jetpack Compose (at this moment only HomeFragment) **DONE**
