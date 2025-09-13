@@ -3,7 +3,6 @@ package com.migualador.cocktails.domain.usecases.cocktail_detail
 import com.migualador.cocktails.data.entities.CocktailDetail
 import com.migualador.cocktails.data.repositories.CocktailsDetailsRepository
 import com.migualador.cocktails.domain.BaseUseCase
-import com.migualador.cocktails.domain.UseCaseResult
 import javax.inject.Inject
 
 /**
@@ -14,18 +13,25 @@ import javax.inject.Inject
  */
 class RetrieveCocktailDetailUseCase @Inject constructor (
     private val cocktailsDetailsRepository: CocktailsDetailsRepository,
-): BaseUseCase<String, CocktailDetail>() {
+): BaseUseCase<String, RetrieveCocktailDetailUseCase.UseCaseResult>() {
 
-    override suspend fun useCaseContent(params: String): UseCaseResult<CocktailDetail> {
+    sealed class UseCaseResult {
+        data class Success(val data: CocktailDetail): UseCaseResult()
+        data object CocktailNotFoundError: UseCaseResult()
+        data object NetworkError: UseCaseResult()
+    }
+
+    override suspend fun useCaseContent(params: String): UseCaseResult {
         return try {
             val result = cocktailsDetailsRepository.getCocktailDetail(params)
             if (result == null) {
-                UseCaseResult.Error(IllegalStateException("The cocktail detail couldn´t be retrieved"))
+                UseCaseResult.CocktailNotFoundError
             } else {
                 UseCaseResult.Success(result)
             }
-        } catch (e: Exception) {
-            UseCaseResult.Error(e)
+
+        } catch (_: Exception) {
+            UseCaseResult.NetworkError
         }
     }
 }

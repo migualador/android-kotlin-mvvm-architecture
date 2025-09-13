@@ -5,7 +5,6 @@ import com.migualador.cocktails.data.repositories.AlcoholicCocktailsRepository
 import com.migualador.cocktails.data.repositories.FavoriteCocktailsRepository
 import com.migualador.cocktails.data.repositories.NonAlcoholicCocktailsRepository
 import com.migualador.cocktails.domain.BaseUseCase
-import com.migualador.cocktails.domain.UseCaseResult
 import javax.inject.Inject
 
 /**
@@ -17,9 +16,13 @@ class RetrieveFavoriteCocktailsUseCase @Inject constructor (
     private val favoriteCocktailsRepository: FavoriteCocktailsRepository,
     private val alcoholicCocktailsRepository: AlcoholicCocktailsRepository,
     private val nonAlcoholicCocktailsRepository: NonAlcoholicCocktailsRepository
-): BaseUseCase<Unit, List<Cocktail>>() {
+): BaseUseCase<Unit, RetrieveFavoriteCocktailsUseCase.UseCaseResult>() {
 
-    override suspend fun useCaseContent(params: Unit): UseCaseResult<List<Cocktail>> {
+    sealed class UseCaseResult {
+        data class Success(val data: List<Cocktail>): UseCaseResult()
+    }
+
+    override suspend fun useCaseContent(params: Unit): UseCaseResult {
         val favoriteCocktails = favoriteCocktailsRepository.getFavoriteCocktails()
         val favoriteCocktailsIds = favoriteCocktails.map { it.cocktailId }
         val favoriteAlcoholicCocktails = alcoholicCocktailsRepository.getAlcoholicCocktailsById(favoriteCocktailsIds)

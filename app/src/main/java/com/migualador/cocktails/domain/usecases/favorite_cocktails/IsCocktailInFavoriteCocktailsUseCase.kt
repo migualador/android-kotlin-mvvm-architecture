@@ -1,8 +1,7 @@
 package com.migualador.cocktails.domain.usecases.favorite_cocktails
 
-import com.migualador.cocktails.domain.BaseUseCase
-import com.migualador.cocktails.domain.UseCaseResult
 import com.migualador.cocktails.data.repositories.FavoriteCocktailsRepository
+import com.migualador.cocktails.domain.BaseUseCase
 import javax.inject.Inject
 
 /**
@@ -14,12 +13,8 @@ class IsCocktailInFavoriteCocktailsUseCase @Inject constructor (
     private val favoriteCocktailsRepository: FavoriteCocktailsRepository
 ): BaseUseCase<String, Boolean>() {
 
-    override suspend fun useCaseContent(params: String): UseCaseResult<Boolean> {
+    override suspend fun useCaseContent(params: String): Boolean {
         val cocktail = favoriteCocktailsRepository.getFavoriteCocktailById(params)
-        return if (cocktail != null) {
-            UseCaseResult.Success(true)
-        } else {
-            UseCaseResult.Success(false)
-        }
+        return cocktail != null
     }
 }

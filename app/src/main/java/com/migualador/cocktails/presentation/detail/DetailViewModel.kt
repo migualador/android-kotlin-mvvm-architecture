@@ -3,7 +3,7 @@ package com.migualador.cocktails.presentation.detail
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.migualador.cocktails.domain.UseCaseResult
+import androidx.lifecycle.viewModelScope
 import com.migualador.cocktails.domain.usecases.cocktail_detail.RetrieveCocktailDetailUseCase
 import com.migualador.cocktails.domain.usecases.favorite_cocktails.AddFavoriteCocktailUseCase
 import com.migualador.cocktails.domain.usecases.favorite_cocktails.IsCocktailInFavoriteCocktailsUseCase
@@ -12,6 +12,7 @@ import com.migualador.cocktails.presentation.Event
 import com.migualador.cocktails.presentation.home.mapper_extensions.toCocktailDetailUiState
 import com.migualador.cocktails.presentation.home.ui_states.CocktailDetailUiState
 import com.migualador.cocktails.presentation.home.ui_states.NavigateBackUiState
+import kotlinx.coroutines.launch
 
 
 /**
@@ -40,22 +41,24 @@ class DetailViewModel(
 
     fun obtainCocktailDetail(cocktailId: String) {
 
-        retrieveCocktailDetailUseCase.execute(cocktailId) { result ->
-            currentCocktailId = cocktailId
-            if (result is UseCaseResult.Success) {
-                _cocktailDetailLiveData.value = result.data.toCocktailDetailUiState()
+        viewModelScope.launch {
+            when (val result = retrieveCocktailDetailUseCase(cocktailId)) {
+                is RetrieveCocktailDetailUseCase.UseCaseResult.Success-> {
+                    currentCocktailId = cocktailId
+                    _cocktailDetailLiveData.value = result.data.toCocktailDetailUiState()
 
+                }
+                is RetrieveCocktailDetailUseCase.UseCaseResult.CocktailNotFoundError -> {}
+                is RetrieveCocktailDetailUseCase.UseCaseResult.NetworkError -> {}
             }
         }
 
-        isCocktailInFavoriteCocktailsUseCase.execute(cocktailId) { result ->
-            if (result is UseCaseResult.Success) {
-                isFavorite = result.data
-                _isFavoriteLiveData.value = isFavorite
-            }
+        viewModelScope.launch {
+            val isFavorite = isCocktailInFavoriteCocktailsUseCase(cocktailId)
+            _isFavoriteLiveData.value = isFavorite
         }
-
     }
+
 
     fun toggleFavorite() {
         isFavorite = !isFavorite
@@ -63,9 +66,13 @@ class DetailViewModel(
         _isFavoriteLiveData.value = isFavorite
 
         if (isFavorite) {
-            addFavoriteCocktailUseCase.execute(currentCocktailId)
+            viewModelScope.launch {
+                addFavoriteCocktailUseCase(currentCocktailId)
+            }
         } else {
-            removeFavoriteCocktailUseCase.execute(currentCocktailId)
+            viewModelScope.launch {
+                removeFavoriteCocktailUseCase(currentCocktailId)
+            }
         }
     }
 

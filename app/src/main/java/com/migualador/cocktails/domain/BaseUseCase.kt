@@ -1,30 +1,20 @@
 package com.migualador.cocktails.domain
 
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotlin.coroutines.CoroutineContext
 
 /**
  * BaseUseCase
  *
+ * Provides a common way of executing use cases, using generic types for both the input data
+ * parameters and the output UseCaseResult data
  */
-abstract class BaseUseCase<P, R> : CoroutineScope {
-    override val coroutineContext: CoroutineContext
-        get() = Dispatchers.Main
-
-    fun execute(params: P, onResult: (UseCaseResult<R>) -> Unit = {})  {
-
-        launch {
-            val result = withContext(Dispatchers.IO) {
-                useCaseContent(params)
-            }
-            onResult(result)
-
+abstract class BaseUseCase<P, R> {
+     suspend operator fun invoke(params: P): R =
+        withContext(Dispatchers.IO) {
+            useCaseContent(params)
         }
-    }
 
-    abstract suspend fun useCaseContent(params: P): UseCaseResult<R>
-    
+    abstract suspend fun useCaseContent(params: P): R
+
 }

@@ -3,7 +3,7 @@ package com.migualador.cocktails.presentation.home
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.migualador.cocktails.domain.UseCaseResult
+import androidx.lifecycle.viewModelScope
 import com.migualador.cocktails.domain.usecases.alcoholic_cocktails.RetrieveAlcoholicCocktailsUseCase
 import com.migualador.cocktails.domain.usecases.favorite_cocktails.RetrieveFavoriteCocktailsUseCase
 import com.migualador.cocktails.domain.usecases.non_alcoholic_cocktails.RetrieveNonAlcoholicCocktailsUseCase
@@ -15,6 +15,7 @@ import com.migualador.cocktails.presentation.home.ui_states.CocktailDetailUiStat
 import com.migualador.cocktails.presentation.home.ui_states.CocktailUiState
 import com.migualador.cocktails.presentation.home.ui_states.LoadingUiState
 import com.migualador.cocktails.presentation.home.ui_states.NavigateUiState
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /**
@@ -61,60 +62,67 @@ class HomeViewModel @Inject constructor (
 
         _loadingUiStateLiveData.value = Event(LoadingUiState(true))
 
-        retrieveAlcoholicCocktailsUseCase.execute(Unit) { result ->
-            if (result is UseCaseResult.Success) {
-                _alcoholicCocktailsLiveData.value = result.data.map {
-                    it.toCocktailUiState(
-                        onClick = { navigateToDetail(it.id) }
-                    )
+        viewModelScope.launch {
+            when (val result = retrieveAlcoholicCocktailsUseCase(Unit)) {
+                is RetrieveAlcoholicCocktailsUseCase.UseCaseResult.Success -> {
+                    _alcoholicCocktailsLiveData.value = result.data.map {
+                        it.toCocktailUiState(
+                            onClick = { navigateToDetail(it.id) }
+                        )
+                    }
                 }
+                is RetrieveAlcoholicCocktailsUseCase.UseCaseResult.NetworkError -> {}
             }
 
             requestNonAlcoholicCocktails()
         }
-
     }
 
     private fun requestNonAlcoholicCocktails() {
 
-        retrieveNonAlcoholicCocktailsUseCase.execute(Unit) { result ->
-            if (result is UseCaseResult.Success) {
-                _nonAlcoholicCocktailsLiveData.value = result.data.map {
-                    it.toCocktailUiState(
-                        onClick = { navigateToDetail(it.id) }
-                    )
+        viewModelScope.launch {
+            when (val result = retrieveNonAlcoholicCocktailsUseCase(Unit)) {
+                is RetrieveNonAlcoholicCocktailsUseCase.UseCaseResult.Success -> {
+                    _nonAlcoholicCocktailsLiveData.value = result.data.map {
+                        it.toCocktailUiState(
+                            onClick = { navigateToDetail(it.id) }
+                        )
+                    }
                 }
+                is RetrieveNonAlcoholicCocktailsUseCase.UseCaseResult.NetworkError -> {}
             }
 
             requestFeaturedCocktails()
         }
-
     }
 
     private fun requestFeaturedCocktails() {
-
-        retrieveRandomCocktailsUseCase.execute(Unit) { result ->
-            if (result is UseCaseResult.Success) {
-                _featuredCocktailsLiveData.value = result.data.map {
-                    it.toCocktailDetailUiState(
-                        onClick = { navigateToDetail(it.id) }
-                    )
+        viewModelScope.launch {
+            when (val result = retrieveRandomCocktailsUseCase(Unit)) {
+                is RetrieveRandomCocktailsUseCase.UseCaseResult.Success -> {
+                    _featuredCocktailsLiveData.value = result.data.map {
+                        it.toCocktailDetailUiState(
+                            onClick = { navigateToDetail(it.id) }
+                        )
+                    }
                 }
+                is RetrieveRandomCocktailsUseCase.UseCaseResult.NetworkError -> {}
             }
-
             requestFavoriteCocktails()
         }
-
     }
+
 
     private fun requestFavoriteCocktails() {
 
-        retrieveFavoriteCocktailsUseCase.execute(Unit) { result ->
-            if (result is UseCaseResult.Success) {
-                _favoriteCocktailsLiveData.value = result.data.map {
-                    it.toCocktailUiState(
-                        onClick = { navigateToDetail(it.id) }
-                    )
+        viewModelScope.launch {
+            when(val result = retrieveFavoriteCocktailsUseCase(Unit)) {
+                is RetrieveFavoriteCocktailsUseCase.UseCaseResult.Success-> {
+                    _favoriteCocktailsLiveData.value = result.data.map {
+                        it.toCocktailUiState(
+                            onClick = { navigateToDetail(it.id) }
+                        )
+                    }
                 }
             }
             _loadingUiStateLiveData.value = Event(LoadingUiState(false))

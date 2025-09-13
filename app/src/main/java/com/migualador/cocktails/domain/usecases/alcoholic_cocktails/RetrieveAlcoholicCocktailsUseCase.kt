@@ -3,7 +3,6 @@ package com.migualador.cocktails.domain.usecases.alcoholic_cocktails
 import com.migualador.cocktails.data.entities.Cocktail
 import com.migualador.cocktails.data.repositories.AlcoholicCocktailsRepository
 import com.migualador.cocktails.domain.BaseUseCase
-import com.migualador.cocktails.domain.UseCaseResult
 import javax.inject.Inject
 
 /**
@@ -14,18 +13,20 @@ import javax.inject.Inject
  */
 class RetrieveAlcoholicCocktailsUseCase @Inject constructor (
     private val alcoholicCocktailsRepository: AlcoholicCocktailsRepository,
-): BaseUseCase<Unit, List<Cocktail>>() {
+): BaseUseCase<Unit, RetrieveAlcoholicCocktailsUseCase.UseCaseResult>() {
 
-    override suspend fun useCaseContent(params: Unit): UseCaseResult<List<Cocktail>> {
+    sealed class UseCaseResult {
+        data class Success(val data: List<Cocktail>): UseCaseResult()
+        data object NetworkError: UseCaseResult()
+    }
+
+    override suspend fun useCaseContent(params: Unit): UseCaseResult {
         return try {
             val result = alcoholicCocktailsRepository.getAlcoholicCocktails()
-            if (result == null) {
-                UseCaseResult.Error(IllegalStateException("The alcoholic cocktails list is empty"))
-            } else {
-                UseCaseResult.Success(result)
-            }
-        } catch (e: Exception) {
-            UseCaseResult.Error(e)
+            UseCaseResult.Success(result)
+
+        } catch (_: Exception) {
+            UseCaseResult.NetworkError
         }
     }
 }
