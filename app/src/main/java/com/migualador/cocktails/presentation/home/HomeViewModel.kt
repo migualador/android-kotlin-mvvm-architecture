@@ -29,8 +29,8 @@ class HomeViewModel @Inject constructor (
     private val retrieveRandomCocktailsUseCase: RetrieveRandomCocktailsUseCase
 ): ViewModel() {
 
-    private var _loadingUiStateLiveData = MutableLiveData<Event<LoadingUiState>>()
-    val loadingUiStateLiveData: LiveData<Event<LoadingUiState>> = _loadingUiStateLiveData
+    private var _loadingUiStateLiveData = MutableLiveData<LoadingUiState>()
+    val loadingUiStateLiveData: LiveData<LoadingUiState> = _loadingUiStateLiveData
 
     private val _navigateLiveData = MutableLiveData<Event<NavigateUiState>>()
     val navigateLiveData: LiveData<Event<NavigateUiState>> = _navigateLiveData
@@ -47,20 +47,13 @@ class HomeViewModel @Inject constructor (
     private val _featuredCocktailsLiveData = MutableLiveData<List<CocktailDetailUiState>>()
     val featuredCocktailsLiveData: LiveData<List<CocktailDetailUiState>> = _featuredCocktailsLiveData
 
-    private var stateAlreadyRetrieved = false
-
-    fun requestUiState() {
-        if (stateAlreadyRetrieved) {
-            _loadingUiStateLiveData.value = Event(LoadingUiState(false))
-            requestFavoriteCocktails()
-        } else {
-            requestAlcoholicCocktails()
-        }
+    init {
+        requestAlcoholicCocktails()
     }
 
     private fun requestAlcoholicCocktails() {
 
-        _loadingUiStateLiveData.value = Event(LoadingUiState(true))
+        _loadingUiStateLiveData.value = LoadingUiState(true)
 
         viewModelScope.launch {
             when (val result = retrieveAlcoholicCocktailsUseCase(Unit)) {
@@ -108,12 +101,11 @@ class HomeViewModel @Inject constructor (
                 }
                 is RetrieveRandomCocktailsUseCase.UseCaseResult.NetworkError -> {}
             }
-            requestFavoriteCocktails()
         }
     }
 
 
-    private fun requestFavoriteCocktails() {
+    fun requestFavoriteCocktails() {
 
         viewModelScope.launch {
             when(val result = retrieveFavoriteCocktailsUseCase(Unit)) {
@@ -125,10 +117,8 @@ class HomeViewModel @Inject constructor (
                     }
                 }
             }
-            _loadingUiStateLiveData.value = Event(LoadingUiState(false))
+            _loadingUiStateLiveData.value = LoadingUiState(false)
         }
-
-        stateAlreadyRetrieved = true
     }
 
     fun alcoholicCocktailsHeaderPressed() {

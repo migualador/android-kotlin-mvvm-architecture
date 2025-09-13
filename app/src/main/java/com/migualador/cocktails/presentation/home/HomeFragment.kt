@@ -71,19 +71,19 @@ class HomeFragment: Fragment() {
         super.onViewCreated(view, savedInstanceState)
         navController = view.findNavController()
         setupObservers()
-        viewModel.requestUiState()
+        viewModel.requestFavoriteCocktails()
     }
 
     @Composable
     fun Screen() {
         val loadingUiState by viewModel.loadingUiStateLiveData.observeAsState(false)
-        val loading = (loadingUiState as Event<LoadingUiState>).getContentIfNotHandled()?.loading
+        val isLoading = (loadingUiState as LoadingUiState).loading
 
-        if ((loading != null) && (loading == false)) {
-            ScreenReady()
-        }
-        else {
+        if (isLoading) {
             ScreenLoading()
+
+        } else {
+            ScreenReady()
         }
     }
 
