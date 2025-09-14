@@ -32,7 +32,7 @@ class FavoriteCocktailsDBDataSource @Inject constructor(
     }
 
     fun addFavoriteCocktail(favoriteCocktail: FavoriteCocktail) {
-        room.favoriteCocktailsDao().insertAll(favoriteCocktail)
+        room.favoriteCocktailsDao().insertAll(listOf(favoriteCocktail))
     }
 
     fun removeFavoriteCocktail(favoriteCocktail: FavoriteCocktail) {

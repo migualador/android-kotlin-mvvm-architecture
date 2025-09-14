@@ -25,7 +25,7 @@ interface FavoriteCocktailsDAO {
     fun findCocktailWithId(search: String): List<FavoriteCocktail>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertAll(vararg favoriteCocktails: FavoriteCocktail)
+    fun insertAll(favoriteCocktails: List<FavoriteCocktail>)
 
 
 }
