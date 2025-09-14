@@ -19,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
@@ -52,7 +53,8 @@ class HomeFragment: Fragment() {
     ): View {
         injectDependencies()
 
-        return ComposeView(requireContext()).apply {
+        return ComposeView(
+            requireContext()).apply {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
                 Screen()
@@ -89,7 +91,7 @@ class HomeFragment: Fragment() {
 
     @Composable
     fun ScreenLoading() {
-        Column {
+        Column(modifier = Modifier.testTag("loading_indicator")) {
             Spacer(modifier = Modifier.height(30.dp))
 
             Composables.TopBar()
@@ -110,6 +112,7 @@ class HomeFragment: Fragment() {
     fun ScreenReady() {
         Column(
             modifier = Modifier.verticalScroll(rememberScrollState())
+                .testTag("screen_loaded")
         ) {
 
 
