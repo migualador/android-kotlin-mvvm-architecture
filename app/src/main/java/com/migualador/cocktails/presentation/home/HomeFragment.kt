@@ -27,7 +27,6 @@ import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import com.migualador.cocktails.CocktailsApp
 import com.migualador.cocktails.R
-import com.migualador.cocktails.presentation.Event
 import com.migualador.cocktails.presentation.cocktails_list.CocktailsListFragment
 import com.migualador.cocktails.presentation.composables.Composables
 import com.migualador.cocktails.presentation.composables.HomeComposables
@@ -135,15 +134,15 @@ class HomeFragment: Fragment() {
 
             Composables.FeaturedCocktails(featuredCocktailsList)
 
-            Composables.Header(R.string.home_alcoholic_cocktails) { viewModel.alcoholicCocktailsHeaderPressed() }
+            Composables.Header(R.string.home_alcoholic_cocktails) { navigateToAlcoholicCocktailsList() }
 
             Composables.Cocktails(alcoholicCocktailsList)
 
-            Composables.Header(R.string.home_non_alcoholic_cocktails) { viewModel.nonAlcoholicCocktailsHeaderPressed() }
+            Composables.Header(R.string.home_non_alcoholic_cocktails) { navigateToNonAlcoholicCocktailsList() }
 
             Composables.Cocktails(nonAlcoholicCocktailsList)
 
-            Composables.Header(R.string.home_favorite_cocktails) { viewModel.favoriteCocktailsHeaderPressed() }
+            Composables.Header(R.string.home_favorite_cocktails) { navigateToFavoriteCocktailsList() }
 
             HomeComposables.FavoriteCocktails(favoriteCocktailsList)
 
@@ -159,9 +158,6 @@ class HomeFragment: Fragment() {
 
                     when (it) {
                         is NavigateUiState.NavigateToDetail -> navigateToCocktailDetail(it.cocktailId)
-                        is NavigateUiState.NavigateToAlcoholicCocktailsList -> navigateToAlcoholicCocktailsList()
-                        is NavigateUiState.NavigateToNonAlcoholicCocktailsList -> navigateToNonAlcoholicCocktailsList()
-                        is NavigateUiState.NavigateToFavoriteCocktailsList -> navigateToFavoriteCocktailsList()
                     }
                 }
             }

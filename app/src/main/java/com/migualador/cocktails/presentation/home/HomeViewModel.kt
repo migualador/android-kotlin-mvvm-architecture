@@ -121,18 +121,6 @@ class HomeViewModel @Inject constructor (
         }
     }
 
-    fun alcoholicCocktailsHeaderPressed() {
-        _navigateLiveData.value = Event(NavigateUiState.NavigateToAlcoholicCocktailsList)
-    }
-
-    fun nonAlcoholicCocktailsHeaderPressed() {
-        _navigateLiveData.value = Event(NavigateUiState.NavigateToNonAlcoholicCocktailsList)
-    }
-
-    fun favoriteCocktailsHeaderPressed() {
-        _navigateLiveData.value = Event(NavigateUiState.NavigateToFavoriteCocktailsList)
-    }
-
     private fun navigateToDetail(cocktailId: String) {
         _navigateLiveData.value = Event(NavigateUiState.NavigateToDetail(cocktailId))
     }
