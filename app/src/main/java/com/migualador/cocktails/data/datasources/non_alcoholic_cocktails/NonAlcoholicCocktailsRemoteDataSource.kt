@@ -15,16 +15,12 @@ import javax.inject.Inject
  *
  * Retrieves non alcoholic cocktails data from REST API
  */
-class NonAlcoholicCocktailsRemoteDataSource @Inject constructor() {
+class NonAlcoholicCocktailsRemoteDataSource @Inject constructor(
+    val cocktailsAPI: CocktailsAPI
+) {
 
     suspend fun getNonAlcoholicCocktails(): NetworkResult<List<Cocktail>?> {
         return try {
-        val retrofit = Retrofit.Builder()
-            .baseUrl(Constants.THE_COCKTAIL_DB_API_BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-
-        val cocktailsAPI = retrofit.create(CocktailsAPI::class.java)
 
         val response = cocktailsAPI.getNonAlcoholicCocktails(Constants.THE_COCKTAIL_DB_API_KEY)
             .awaitResponse()
