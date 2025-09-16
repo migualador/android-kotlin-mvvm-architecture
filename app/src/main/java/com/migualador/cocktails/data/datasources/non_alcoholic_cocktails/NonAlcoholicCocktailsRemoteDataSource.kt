@@ -5,9 +5,7 @@ import com.migualador.cocktails.data.entities.Cocktail
 import com.migualador.cocktails.data.network.NetworkResult
 import com.migualador.cocktails.data.network.api.CocktailsAPI
 import com.migualador.cocktails.data.network.mapper_extensions.toCocktail
-import retrofit2.Retrofit
 import retrofit2.awaitResponse
-import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Inject
 
 /**
@@ -22,8 +20,9 @@ class NonAlcoholicCocktailsRemoteDataSource @Inject constructor(
     suspend fun getNonAlcoholicCocktails(): NetworkResult<List<Cocktail>?> {
         return try {
 
-        val response = cocktailsAPI.getNonAlcoholicCocktails(Constants.THE_COCKTAIL_DB_API_KEY)
-            .awaitResponse()
+        val response = cocktailsAPI.getNonAlcoholicCocktails(
+                url = Constants.environment.getNonAlcoholicCocktailsListUrl()
+            ).awaitResponse()
 
         if (response.isSuccessful) {
             val getNonAlcoholicCocktailsResponse = response.body()

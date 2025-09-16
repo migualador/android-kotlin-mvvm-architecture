@@ -4,25 +4,24 @@ import com.migualador.cocktails.data.network.entities.GetCocktailDetailResponse
 import com.migualador.cocktails.data.network.entities.GetCocktailsResponse
 import retrofit2.Call
 import retrofit2.http.GET
-import retrofit2.http.Path
 import retrofit2.http.Query
+import retrofit2.http.Url
 
 interface CocktailsAPI {
 
-    @GET("{apiKey}/filter.php?a=Alcoholic")
+    @GET
     fun getAlcoholicCocktails(
-        @Path("apiKey") apiKey: String
+        @Url url: String
     ): Call<GetCocktailsResponse>
 
-    @GET("{apiKey}/filter.php?a=Non_Alcoholic")
+    @GET
     fun getNonAlcoholicCocktails(
-        @Path("apiKey") apiKey: String
+        @Url url: String
     ): Call<GetCocktailsResponse>
 
-    @GET("{apiKey}/lookup.php")
+    @GET
     fun getCocktailDetail(
-        @Path("apiKey") apiKey: String,
-        @Query("i") cocktailId: String
+        @Url url: String,
     ): Call<GetCocktailDetailResponse>
 
 }

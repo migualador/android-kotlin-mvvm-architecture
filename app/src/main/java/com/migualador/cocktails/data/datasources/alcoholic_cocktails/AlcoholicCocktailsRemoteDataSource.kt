@@ -20,8 +20,9 @@ class AlcoholicCocktailsRemoteDataSource @Inject constructor(
     suspend fun getAlcoholicCocktails(): NetworkResult<List<Cocktail>?> {
         return try {
 
-            val response = cocktailsAPI.getAlcoholicCocktails(Constants.THE_COCKTAIL_DB_API_KEY)
-                .awaitResponse()
+            val response = cocktailsAPI.getAlcoholicCocktails(
+                    url = Constants.environment.getAlcoholicCocktailsListUrl()
+                ).awaitResponse()
 
             if (response.isSuccessful) {
                 val getAlcoholicCocktailsResponse = response.body()

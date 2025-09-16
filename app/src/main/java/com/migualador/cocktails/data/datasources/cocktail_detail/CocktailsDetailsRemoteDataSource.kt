@@ -21,9 +21,9 @@ class CocktailsDetailsRemoteDataSource @Inject constructor(
         return try {
 
             val response = cocktailsAPI.getCocktailDetail(
-                Constants.THE_COCKTAIL_DB_API_KEY,
-                cocktailId
-            ).awaitResponse()
+                    url = Constants.environment.getCocktailDetailUrl(cocktailId),
+                ).awaitResponse()
+
 
             if (response.isSuccessful) {
                 val getCocktailDetailResponse = response.body()
