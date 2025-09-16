@@ -64,7 +64,9 @@ class HomeViewModel @Inject constructor (
                         )
                     }
                 }
-                is RetrieveAlcoholicCocktailsUseCase.UseCaseResult.NetworkError -> {}
+                is RetrieveAlcoholicCocktailsUseCase.UseCaseResult.NetworkError -> {
+                    // No time to finish proper error handling. See explanation in document.
+                }
             }
 
             requestNonAlcoholicCocktails()
@@ -82,7 +84,9 @@ class HomeViewModel @Inject constructor (
                         )
                     }
                 }
-                is RetrieveNonAlcoholicCocktailsUseCase.UseCaseResult.NetworkError -> {}
+                is RetrieveNonAlcoholicCocktailsUseCase.UseCaseResult.NetworkError -> {
+                    // No time to finish proper error handling. See explanation in document.
+                }
             }
 
             requestFeaturedCocktails()
@@ -99,7 +103,9 @@ class HomeViewModel @Inject constructor (
                         )
                     }
                 }
-                is RetrieveRandomCocktailsUseCase.UseCaseResult.NetworkError -> {}
+                is RetrieveRandomCocktailsUseCase.UseCaseResult.NetworkError -> {
+                    // No time to finish proper error handling. See explanation in document.
+                }
             }
         }
     }
