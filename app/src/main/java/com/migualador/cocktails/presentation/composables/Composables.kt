@@ -25,6 +25,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.ColorPainter
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -101,12 +102,14 @@ object Composables {
 
     @Composable
     fun Cocktails(
-        cocktailsList: List<CocktailUiState>
+        cocktailsList: List<CocktailUiState>,
+        listTestTag: String
     ) {
         LazyRow(
             modifier = Modifier
                 .padding(horizontal = 16.dp)
                 .height(170.dp)
+                .testTag(listTestTag)
         ) {
             items(cocktailsList) { cocktail ->
                 CocktailItem(cocktail)
@@ -120,7 +123,8 @@ object Composables {
     fun CocktailItem(cocktailUiState: CocktailUiState) {
         Card(
             modifier = Modifier
-                .width(150.dp),
+                .width(150.dp)
+                .testTag("cocktail_item"),
             shape = RoundedCornerShape(6.dp),
             onClick = cocktailUiState.onClick
         ) {

@@ -136,11 +136,11 @@ class HomeFragment: Fragment() {
 
             Composables.Header(R.string.home_alcoholic_cocktails) { navigateToAlcoholicCocktailsList() }
 
-            Composables.Cocktails(alcoholicCocktailsList)
+            Composables.Cocktails(alcoholicCocktailsList, listTestTag = "alcoholic_cocktails_list")
 
             Composables.Header(R.string.home_non_alcoholic_cocktails) { navigateToNonAlcoholicCocktailsList() }
 
-            Composables.Cocktails(nonAlcoholicCocktailsList)
+            Composables.Cocktails(nonAlcoholicCocktailsList, listTestTag = "non_alcoholic_cocktails_list")
 
             Composables.Header(R.string.home_favorite_cocktails) { navigateToFavoriteCocktailsList() }
 

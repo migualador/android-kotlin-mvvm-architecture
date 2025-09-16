@@ -31,7 +31,7 @@ object HomeComposables {
         if (cocktailsList.isEmpty()) {
             NoFavoritesCard()
         } else {
-            Composables.Cocktails(cocktailsList)
+            Composables.Cocktails(cocktailsList, "favorite_cocktails_list")
         }
     }
 

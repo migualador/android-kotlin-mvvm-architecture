@@ -9,6 +9,7 @@ import androidx.navigation.Navigation.findNavController
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import com.migualador.cocktails.presentation.MainActivity
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -41,6 +42,39 @@ class HomeScreenTest {
                 composeTestRule.onAllNodesWithTag("loading_indicator").fetchSemanticsNodes()
                     .isEmpty()
             }
+
+        } catch (e: ComposeTimeoutException) {
+            throw AssertionError("Loading indicator did not disappear within 10 seconds. Consider also the network state.", e)
+        }
+    }
+
+    @Test
+    fun after_loading_data_home_screen_shows_list_of_alcoholic_cocktails() {
+
+        try {
+            composeTestRule.waitUntil(timeoutMillis = 10000) {
+                composeTestRule.onAllNodesWithTag("loading_indicator").fetchSemanticsNodes()
+                    .isEmpty()
+            }
+
+            composeTestRule.onNodeWithTag("alcoholic_cocktails_list").assertIsDisplayed()
+
+        } catch (e: ComposeTimeoutException) {
+            throw AssertionError("Loading indicator did not disappear within 10 seconds. Consider also the network state.", e)
+        }
+    }
+
+    @Test
+    fun after_loading_data_home_screen_list_of_alcoholic_cocktails_has_any_item() {
+
+        try {
+            composeTestRule.waitUntil(timeoutMillis = 10000) {
+                composeTestRule.onAllNodesWithTag("loading_indicator").fetchSemanticsNodes()
+                    .isEmpty()
+            }
+
+            val items = composeTestRule.onAllNodesWithTag("cocktail_item").fetchSemanticsNodes()
+            assert(items.isNotEmpty())
 
         } catch (e: ComposeTimeoutException) {
             throw AssertionError("Loading indicator did not disappear within 10 seconds. Consider also the network state.", e)
